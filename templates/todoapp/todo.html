@@ -11,10 +11,11 @@
   
               <h4 class="text-center my-3 pb-3">To Do App</h4>
   
-              <form method="#" class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
+              <form method="POST" class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
+                {% csrf_token %}
                 <div class="col-12">
                   <div class="form-outline">
-                    <input type="text" id="form1" class="form-control" required placeholder="Enter a task here"/>
+                    <input type="text" id="form1" class="form-control" name="task"  placeholder="Enter a task here"/>
                   </div>
                 </div>
   

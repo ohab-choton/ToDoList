@@ -3,14 +3,23 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import ToDo
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
+#send data to database 
+@login_required
 def home(request):
-    if request.method == 'POST':
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if request.method == 'POST':  
         task=request.POST.get('task')
-        new_todo=ToDo(user=request.user,todo_name=task)
-        new_todo.save()
-    return render(request, 'todoapp/todo.html')
+        if task.strip():
+            new_todo=ToDo(user=request.user,todo_name=task)
+            new_todo.save()
+            # iexact means case comparison
+    all_todos = ToDo.objects.filter(user=request.user).exclude(todo_name__iexact='').exclude(todo_name__exact=' ')
+    return render(request, 'todoapp/todo.html',{'all_todos':all_todos})
 
 def register(request):
     if request.method == 'POST':
@@ -36,6 +45,12 @@ def register(request):
         return redirect('login')
     return render( request, 'todoapp/registration.html')
 
+# views.py
+def logoutPage(request):    
+    logout(request)
+    return redirect('login')
+
+
 def loginPage(request):
     if request.method == 'POST':
         username =request.POST.get('uname')
@@ -50,3 +65,20 @@ def loginPage(request):
             return redirect('login')
 
     return render (request, 'todoapp/login.html')
+
+def deleteTask(request,name):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    get_todo=ToDo.objects.filter(user=request.user,todo_name=name)
+    get_todo.delete()
+    return redirect('home')
+    
+
+def updateTask(request,name):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    get_todo= ToDo.objects.get(user=request.user,todo_name=name)
+    get_todo.status = True
+    get_todo.save()
+    return redirect('home')
+    

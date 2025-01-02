@@ -9,7 +9,7 @@
           <div class="card rounded-3">
             <div class="card-body p-4">
   
-              <h4 class="text-center my-3 pb-3">To Do App</h4>
+              <h4 class="text-center my-3 pb-3">To Do List</h4>
   
               <form method="POST" class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
                 {% csrf_token %}
@@ -19,10 +19,12 @@
                   </div>
                 </div>
   
-                <div class="col-12">
-                  <button type="submit" class="btn btn-primary">Add Task</button>
+                <div class="col-12 d-flex justify-content-center">
+                  <button type="submit" class="btn btn-primary me-2">Add Task</button>
+                  <a href="{% url 'logout' %}" style="background-color: #007BFF" class="btn btn-secondary ">Logout</a>
                 </div>
               </form>
+              
   
               <table class="table mb-4">
                 <thead>
@@ -34,33 +36,31 @@
                   </tr>
                 </thead>
                 <tbody>
+                  {% for task in all_todos %}
                   <tr>
-                    <th scope="row">1</th>
-                    <td>Buy groceries for next week</td>
-                    <td>In progress</td>
-                    <td>
-                      <button type="submit" class="btn btn-danger">Delete</button>
-                      <button type="submit" class="btn btn-success ms-1">Finished</button>
-                    </td>
+                    
+                    <td>{{task.todo_name}}</td>
+                    {% if task.status == True %}
+
+                    <td>Finished</td>
+                    {% else %}
+                    <td>In Progress</td>
+                    {% endif %}
+                    <td class="d-flex flex-column align-items-center">
+                      <!-- Delete button -->
+                        
+                        <a href="{% url 'delete' task.todo_name  %}" class="w-100 mb-2">
+                           <button type="submit" class="btn btn-danger mb-2 w-100">Delete</button>
+                           </a>
+                  
+                      <!-- Finished button -->
+                      <a href="{% url 'update' task.todo_name %}" class="w-100">
+                        <button type="button" class="btn btn-success w-100">Finished</button>
+                    </a>
+                  </td>
+                  
                   </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Renew car insurance</td>
-                    <td>In progress</td>
-                    <td>
-                      <button type="submit" class="btn btn-danger">Delete</button>
-                      <button type="submit" class="btn btn-success ms-1">Finished</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Sign up for online course</td>
-                    <td>In progress</td>
-                    <td>
-                      <button type="submit" class="btn btn-danger">Delete</button>
-                      <button type="submit" class="btn btn-success ms-1">Finished</button>
-                    </td>
-                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
   
